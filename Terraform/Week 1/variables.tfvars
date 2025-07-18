@@ -34,4 +34,4 @@ variable "instance_types" {
     var.aws  = "t2.micro"
     var.aws  = "t2.small"
   }
-}
+} 
