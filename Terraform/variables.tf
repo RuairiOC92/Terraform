@@ -2,12 +2,12 @@
 
 variable "aws" {
   description = "AWS configuration variables dev/staging/prod"
-  type        = map(string)
+  type        = string
 
-validation {
-  error_message = "Value must be one of: dev, staging, prod"
-  condition       = contains (["dev"], ["staging"], ["prod"], var.aws)
- }
+  validation {
+    error_message = "Value must be one of: dev, staging, prod"
+    condition       = contains(["dev", "staging", "prod"], var.aws)
+  }
 }
 
 ## Create backup days variable ##
@@ -18,22 +18,22 @@ variable "backup_days" {
 
   validation {
     error_message = "Backups should occur between 1 and 30 days"
-    condition = var.backups_days > 0 && var.backup_days <= 30
+    condition = var.backup_days > 0 && var.backup_days <= 30
  }
 }
 
 ## Enable encryption variable ##
 
 variable "enable_encryption" {
-  type = boolean
+  type = bool
   default = false
 }
 
 ## Create availability zones variable ##
 
 variable "availability_zones" {
-  type = list[String]
-  default = [us-east-1a, us-east-1b]
+  type = list(string)
+  default = ["us-east-1a", "us-east-1b"]
 }
 
 ## Create instance types variable ##
@@ -41,7 +41,7 @@ variable "availability_zones" {
 variable "instance_types" {
   type = map(string)
   default = {
-    var.aws  = "t2.micro"
-    var.aws  = "t2.small"
+    dev  = "t2.micro"
+    prod  = "t2.small"
   }
 } 
