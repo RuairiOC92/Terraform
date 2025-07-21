@@ -1,3 +1,5 @@
+## Create environment variables ##
+
 variable "aws" {
   description = "AWS configuration variables dev/staging/prod"
   type        = map(string)
@@ -7,6 +9,8 @@ validation {
   condition       = contains (["dev"], ["staging"], ["prod"], var.aws)
  }
 }
+
+## Create backup days variable ##
 
 variable "backup_days" {
   type = number 
@@ -18,15 +22,21 @@ variable "backup_days" {
  }
 }
 
+## Enable encryption variable ##
+
 variable "enable_encryption" {
   type = boolean
   default = false
 }
 
+## Create availability zones variable ##
+
 variable "availability_zones" {
   type = list[String]
   default = [us-east-1a, us-east-1b]
 }
+
+## Create instance types variable ##
 
 variable "instance_types" {
   type = map(string)
