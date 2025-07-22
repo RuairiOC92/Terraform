@@ -27,6 +27,24 @@ resource "aws_subnet" "private_subnet" {
     availability_zone = "us-east-1b"
 }
 
+## Availability Zones ##
+
+data "aws_availability_zones" "available"{}
+
+## Latest Ubuntu Image ##
+
+data "aws_ami" "ubuntu" {
+    most_recent = true 
+
+    filter {
+        name = "name"
+        values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    }
+
+    owners = ["099720109477"] # Canonical
+
+}
+
 ## Create Security Group ##
 
 locals {
@@ -48,6 +66,10 @@ resource "aws_security_group" "mysgroup" {
 
     }
 }
+
+## Current AWS Account ID ##
+
+data "aws_caller_identity" "current" {}
 
 ## Creating s3 Bucket ##
 

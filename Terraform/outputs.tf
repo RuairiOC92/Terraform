@@ -1,29 +1,13 @@
 
 ## Latest AWS availability zones ##
 
-data "aws_availability_zone" {
-    state = "available"
-}
-
 output "availability_zones" {
-    value = data.aws_availability_zones.availability_zones.names
+    value = data.aws_availability_zones.available.names
     description = "List of all availability zones"
 }
 
 
 ## Latest Ubuntu Image ##
-
-data "aws_ami" "ubuntu" {
-    most_recent = true 
-
-    filter {
-        name = "name"
-        value = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noblet-24.04-amd64-server-*"]
-    }
-
-    owners = ["099720109477"] # Canonical
-
-}
 
  output "aws_ami_id" {
         value = data.aws_ami.ubuntu.id
@@ -33,12 +17,11 @@ data "aws_ami" "ubuntu" {
 
 ## Current AWS Account ID ##
 
-data "aws_current_id" "current" {
     output "account_id" {
-        value = data.aws_current_id.current.account_id
-        description = "This is the current AWS account ID"    }
+        value = data.aws_caller_identity.current.account_id
+        description = "This is the current AWS account ID"    
+        }
 
-}
 
 ## Creating s3 Bucket ##
 
@@ -86,7 +69,6 @@ output "bucket_arns"{
 ## Create 3 IAM users with count ##
 
 output "iam_names" {
-    value = aws_iam_user.terraform_user.names
-    description = "List of all IAM user names created"
+  value       = [for user in aws_iam_user.terraform_user : user.name]
+  description = "List of IAM user names created by terraform_user resource."
 }
-
