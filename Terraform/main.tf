@@ -106,35 +106,30 @@ resource "aws_iam_user" "terraform_user" {
 }
 
 
-## Create Security Roles for Ec2 ##
 
-resource "aws_security_group" "instance_sg" {
-  name        = "dynamic-ec2-sg"
-  description = "Allow SSH, HTTP, and HTTPS access"
-  vpc_id = var.vpc_id
+## Creating the dynamic block for ingress rules ##
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+
+
+resource "aws_security_group" "web_rules" {
+  name        = "inbound security group"
+  description = "Inbound Traffic"
+  vpc_id      = "vpc-0247ae9e1b35384bd"
+
+  dynamic "ingress" {
+    for_each = var.ingress_policy
+    content {
+      description = ingress.value.description
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
   }
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 
   egress {
+    description = "Outbound Traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -142,20 +137,9 @@ resource "aws_security_group" "instance_sg" {
   }
 }
 
-## Creating the dynamic instances ##
+## Using count to create IAM users ##
 
-resource "aws_instance" "instances" {
-
-  for_each = { for config in var.named_instances : config.name => config }
-
-  instance_type          = each.value.instance_type
-  ami                    = each.value.ami_id
-  vpc_security_group_ids = [aws_security_group.instance_sg.id]
-
+resource "aws_iam_user" "team_members" {
+  count = length(var.iam_users)
+  name  = var.iam_users[count.index]
 }
-
-
-
-
-
-

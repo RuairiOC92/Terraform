@@ -73,18 +73,6 @@ output "iam_names" {
   description = "List of IAM user names created by terraform_user resource."
 }
 
-## Output for instances ##
-
-output "instance_public_ips" {
-  description = "Public IP addresses of the created EC2 instances."
-  value       = { for name, instance in aws_instance.instances : name => instance.public_ip }
-}
-
-# Output the IDs of the created instances
-output "instance_names" {
-  description = "IDs of the created EC2 instances."
-  value       = { for name, instance in aws_instance.instances : name => instance.id }
-}
 
 
 
