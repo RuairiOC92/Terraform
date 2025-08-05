@@ -46,43 +46,47 @@ variable "instance_types" {
   }
 }
 
-## Create 5 s3 buckets with names ##
+## Create Dynamic ingress policy ##
 
-variable "named_instances" {
+variable "ingress_policy" {
   type = list(object({
-    name   = string
-    instance_type   = string
-    ami_id = string
+    description = string
+    to_port     = number
+    from_port   = number
+    protocol    = string
+    cidr_blocks = list(string)
   }))
-
-  default = [{
-    name   = "Ruairi OConnell"
-    instance_type   = " t2.micro"
-    ami_id = "ami-000ec6c25978d5999"
+  default = [
+    {
+      description = "Allow inbound ssh traffic"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
     },
     {
-      name   = "Alan Hollowed"
-      instance_type   = "t2.micro"
-      ami_id = "ami-000ec6c25978d5999"
+      description = "Allow inbound http traffic"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
     },
     {
-      name   = "Aoife Kelly"
-      instance_type   = "t2.micro"
-      ami_id = "ami-000ec6c25978d5999"
-    },
-    {
-      name   = "Evgeny "
-      instance_type   = "t2.micro"
-      ami_id = "ami-000ec6c25978d5999"
-    },
-    {
-      name   = "Anton Sidelnekov"
-      instance_type   = "t2.micro"
-      ami_id = "ami-000ec6c25978d5999"
-  }]
+      description = "Allow inbound https traffic"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
 }
 
-variable "vpc_id" {
-  type = string
-  default = "vpc-0247ae9e1b35384bd"
+variable "iam_users" {
+  description = "Create user list"
+  type        = list(string)
+  default     = ["Evgeny"]
 }
+
+
+
+
