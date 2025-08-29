@@ -2,6 +2,15 @@ provider "aws" {
   region = "us-east-1"
 }
 
+terraform {
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
+  }
+}
+
 ## Create CIDR Block ##
 
 resource "aws_vpc" "main" {
@@ -143,3 +152,51 @@ resource "aws_iam_user" "team_members" {
   count = length(var.iam_users)
   name  = var.iam_users[count.index]
 }
+
+
+## Security Groups Using Module ##
+
+module "security_group_rule" {
+  source = "terraform-aws-modules/security-group/aws"
+
+  name   = "security-group-modules"
+  vpc_id = "vpc-0247ae9e1b35384bd"
+
+  ingress_with_cidr_blocks = [
+    {
+      description = "Allow inbound ssh traffic"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "Allow inbound http traffic"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+  egress_with_cidr_blocks = [
+    {
+      description = "Allow inbound https traffic"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+}
+
+
+## IAM User Using Module ##
+
+module "iam_users" {
+  source   = "terraform-aws-modules/iam/aws//modules/iam-user"
+  for_each = var.iam_users_module
+  name     = each.value
+}
+
+
+

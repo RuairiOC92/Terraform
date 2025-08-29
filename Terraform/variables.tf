@@ -88,5 +88,23 @@ variable "iam_users" {
 }
 
 
+variable "iam_users_module" {
+  description = "Create user list"
+  type        = set(string)
+  default = ["Evgeny",
+    "Ruairi",
+    "Aoife",
+    "Alan",
+    "Anton",
+    "Nakul",
+    "Mano",
+    "Alex",
+    "Wanderley",
+  "Alastair"]
+}
+
+
+
+
 
 

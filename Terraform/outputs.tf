@@ -74,6 +74,13 @@ output "iam_names" {
 }
 
 
+## Output user that is 5 in the list ##
+
+
+output "fifth_user" {
+  value = tolist(var.iam_users_module)[4]
+}
+
 
 
 
